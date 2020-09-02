@@ -1,0 +1,11 @@
+if ((typeof tab != 'undefined') &&  (tab !== null) && (tab != '')) {
+    $('.tabs-menu li').removeClass("current");
+    $('#'+tab).addClass("current");
+    
+    $(".tab-content").addClass("moved").hide();
+    $('#tab-'+tab).hide().removeClass("moved").fadeIn();
+    //$('#tab-'+tab).show();
+}else{
+  $(".tab-content:first").removeClass("moved");
+}
+

@@ -1,0 +1,361 @@
+/* execute section */
+$(document).ready(function () {
+
+	if ((typeof runLater) === 'object') doRunLater(runLater); /* execute the hooked up functions (see below) */
+  
+  $(".tab-content").addClass("moved");
+	//$(".tab-content:first").removeClass("moved");
+
+	$(".tabs-menu a").click(function (event) {
+		event.preventDefault();
+		$(this).parent().addClass("current");
+		$(this).parent().siblings().removeClass("current");
+		var tab = $(this).attr("href");
+		$(".tab-content").not(tab).addClass("moved");
+		$(tab).css("display", "none").removeClass("moved").slideDown();
+	});
+
+	$(".toggleit").click(function (event) {
+		event.preventDefault();
+		toggleit($(this).attr('href'));
+	});
+	mainmenu();
+	$('a.share').click(function (event) {
+		event.preventDefault();
+		PopupHandler($(this).prop('href'));
+		this.preventDefault()
+		return false;
+	});
+});
+
+if (typeof equals == "undefined" || !(equals instanceof Array)) {
+	equals = ["#leftSide, #rightSide"];
+} else {
+	$.merge(equals, ["#leftSide, #rightSide"]);
+}
+$(window).load(function () {
+	$.each(equals, function (index, value) {
+		equalHeight(value);
+	});
+}); /* use  $.merge(equals, [ "#row1 div.tour","#row2 div.tour" ]) to add extras if needed. */
+
+hideRight();
+$(window).resize(function () {
+	hideRight();
+});
+function hideRight() {
+	($(window).width() < 890) ? $('#rightSide').hide() : $('#rightSide').show();
+}
+
+/* asynchronous (non-blocking) load of other non-essential javascripts */
+(function () {
+	function async_load() {
+		var scripts = [
+			"//www.google.cl/coop/cse/brand?form=cse-search-box&amp;lang=en",
+			"//wms.assoc-amazon.com/20070822/US/js/link-enhancer-common.js?tag=chiletravelco-20",
+		];
+		for (index = 0; index < scripts.length; ++index) {
+			var s = document.createElement('script');
+			s.type = 'text/javascript';
+			s.async = true;
+			s.src = scripts[index];
+			var x = document.getElementsByTagName('script')[0];
+			x.parentNode.insertBefore(s, x);
+		}
+	}
+	window.attachEvent ? window.attachEvent('onload', async_load) : window.addEventListener('load', async_load, false);
+})();
+function isset(iVal) {
+	return (iVal !== "" && iVal != null && iVal !== undefined && typeof(iVal) != "undefined") ? 1 : 0;
+}
+
+/* analytics code, the new one, client pages use the old one, set in the footer of those pages */
+(function (i, s, o, g, r, a, m) {
+	i['GoogleAnalyticsObject'] = r;
+	i[r] = i[r] || function () {
+		(i[r].q = i[r].q || []).push(arguments)
+	},
+	i[r].l = 1 * new Date();
+	a = s.createElement(o),
+	m = s.getElementsByTagName(o)[0];
+	a.async = 1;
+	a.src = g;
+	m.parentNode.insertBefore(a, m)
+})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+ga('create', 'UA-40311056-2', 'auto');
+ga('send', 'pageview');
+// end analytics
+
+/* end execute section */
+
+/* Functions & classes here */
+function toggleit(targetid) {
+	if ($(targetid).hasClass('moved')) {
+		$(targetid).css("display", "none").removeClass("moved").slideDown();
+	} else {
+		$(targetid).slideUp(function () {
+			$(targetid).addClass('moved').css("display", "block");
+		});
+	}
+}
+function win(file, wi, hi) {
+	window.open(file, '', 'width=' + wi + ',height=' + hi + ',directories=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=yes');
+	return false;
+}
+function mail_link(username, domain, host) {
+	address = username + '&#64;' + host + '.' + domain;
+	document.write('<a href=\"mailto:' + address + '?subject=General%20request\">' + address + '</a>');
+}
+function toggle(obj) {
+	var e = $(obj);
+	e.style.display = (e.style.display != 'none') ? 'none' : '';
+}
+
+// feed this function a selector (class) and it will set the height of all of them to the height of the highest one.
+function equalHeight(selector) {
+	var highest = 0;
+	$(selector).each(function () {
+		if ($(this).height() > highest) {
+			highest = $(this).height();
+		}
+	}).each(function () {
+		$(this).height(highest);
+	});
+	// if domover is true then the row will get the class moved, effectively hidingit
+	if ((typeof domover != 'undefined') && (domover === true)) {
+		$(selector).each(function () {
+			$(this).parent().parent().addClass('moved').hide().show(0); // .hide().show(0) is a hck to fix chrome resize problems
+		});
+	}
+}
+// feed this function a selector (class) and it will set the width of all of them to the width of the widest one.
+function equalWidth(selector) {
+	var widest = 0;
+	$(selector).each(function () {
+		if ($(this).width() > widest) {
+			widest = $(this).width();
+		}
+	}).each(function () {
+		$(this).css("display", "block").width(widest); // make sure that the width can be set by setting display:block and then the width.
+	});
+
+}
+/*Define functions to be executed later, in this case define them before adding jquery and execute them afterwards.<br>
+This allows me to use jquery in functions before Jquery is loaded.<br>
+Add new function to be executes like this: runLater.myNewFunc = function(){ alert("runLater.gallery"); } */
+function doRunLater(runLater){ // execute the methods(functions) hooked up to this object one by one in order.
+    for( var i in runLater ){ 
+      if(typeof runLater[i] === "function") { runLater[i](); } // run the function
+    }
+  }
+function mainmenu() {
+	// Note! fixer is the transparent gif that fixes the problem with safari/ios keeping the menus open
+	$(" #menudd ul ul").css({
+		display : "none"
+	});
+	$(" #menudd").removeClass("moved");
+	$(" #menudd li").hover(function (e) {
+		$(this).find('ul:first').css({
+			display : "none",
+			visibility : "visible"
+		}).show();
+		$('#fixer').css({
+			display : "block"
+		});
+	}, function () {
+		$(this).find('ul:first').css({
+			visibility : "hidden"
+		});
+		$('#fixer').css({
+			display : "none"
+		});
+	});
+}
+function PopupHandler(url) {
+	var
+	px = Math.floor(((screen.availWidth || 1024) - 500) / 2),
+	py = Math.floor(((screen.availHeight || 700) - 500) / 2);
+	// open popup
+	var popup = window.open(url, "social",
+			"width=500,height=500,left=" + px + ",top=" + py +
+			",location=0,menubar=0,toolbar=0,status=0,scrollbars=1,resizable=1");
+	if (popup) {
+		popup.focus();
+		if (e.preventDefault)
+			e.preventDefault();
+		e.returnValue = false;
+	}
+	return !!popup;
+}
+/* Weather display functions */
+//longlist();
+//onecity('temuco');
+//weatherlistfull();
+
+function weatherlistfull() {
+	document.write('<table class="weathertable"><tr><td style="border:0">&nbsp;</td>');
+	for (var i = 0, len = 5; i < len; i++) {
+		document.write('<td>' + Pronostico[0].fecha[i] + '</td>');
+	} // write the days on the top
+	document.write('</tr>');
+	total = Pronostico.length; // total number of cities
+	for (var c = 0, clen = total; c < clen; c++) {
+		document.write('<tr>');
+		var city = Pronostico[c].ciudad.replace(/\//g, ', ');
+		document.write('<td>' + city + '</td>');
+		for (var i = 0, len = 5; i < len; i++) {
+			var tempnx = '' + Pronostico[c].temperatura[i].split("/"); //Pronostico[city].temperatura[day].split("/");
+			if (i == 0) {
+				tempnx = tempnx.replace(',', '&lsaquo; ') + '&deg;C';
+			} else {
+				tempnx = tempnx.replace(',', '&deg;C &rsaquo; &lsaquo; ') + '&deg;C';
+			}
+			var icon = '/meteo/img/' + Pronostico[c].icono[i][1]; // Pronostico[cityno].icono[day][morning = 1]
+			document.write('<td><img src="' + icon + '" class="wicon"><br>' + tempnx + '</td>');
+		}
+		document.write('</tr>');
+	}
+	document.write('</table>');
+}
+function onecity(city) {
+	total = Pronostico.length; // total number of cities
+	for (var c = 0, clen = total; c < clen; c++) {
+		if (Pronostico[c].indice == city)
+			break;
+	}
+	document.write('<table class="cityweathertable" id="oneweathertable"><caption>' + Pronostico[c].ciudad + '</caption>');
+	for (var i = 0, len = 5; i < len; i++) {
+		document.write('<tr><td>' + Pronostico[0].fecha[i] + '</td><td>' + formattempcity(Pronostico[c].temperatura[i]) + '</td><td><img src="/meteo/img/' + Pronostico[c].icono[i][1] + '" class="wicon"></td></tr>');
+	}
+	document.write('</table>');
+}
+function formattempcity(temp) {
+	var tempnx = '' + temp.split("/"); //Pronostico[city].temperatura[day].split("/");
+	if (tempnx.charAt(0) == ',') {
+		tempnx = tempnx.replace(',', 'Max ') + '&deg;C';
+	} else {
+		tempnx = tempnx.replace(',', '&deg;C <br>Max ') + '&deg;C';
+		tempnx = 'Min ' + tempnx;
+	}
+	return tempnx;
+}
+function longlist() {
+	// this one prints a out a long list
+	total = Pronostico.length; // total number of cities
+	for (var c = 0, clen = total; c < clen; c++) {
+		document.write(Pronostico[c].ciudad);
+		document.write(' : <br>');
+		for (var i = 0, len = 5; i < len; i++) {
+			document.write(Pronostico[c].fecha[i]); // Pronostico[city].fecha[day_no]
+			document.write(' | ');
+			var tempnx = Pronostico[c].temperatura[i].split("/"); //Pronostico[city].temperatura[day].split("/");
+			document.write(tempnx);
+			document.write(' | ');
+			var icon = '/meteo/img/' + Pronostico[c].icono[i][1]; // Pronostico[cityno].icono[day][morning = 1]
+			document.write('<img src="' + icon + '" width="22px">');
+			document.write('<br>');
+
+		}
+	}
+}
+$.fn.redraw = function () {
+	return $(this).each(function () {
+		var redraw = this.offsetHeight;
+	});
+};
+/**
+ * jQuery.Preload - Multifunctional preloader
+ * Copyright (c) 2008-2014 Ariel Flesler - aflesler<a>gmail<d>com | http://flesler.blogspot.com
+ * https://github.com/flesler/jquery.preload
+ * Licensed under MIT
+ * @author Ariel Flesler
+ * @version 1.0.8
+ */
+;
+(function ($) {
+	var h = $.preload = function (c, d) {
+		if (c.split)
+			c = $(c);
+		d = $.extend({}, h.defaults, d);
+		var f = $.map(c, function (a) {
+				if (!a)
+					return;
+				if (a.split)
+					return d.base + a + d.ext;
+				var b = a.src || a.href;
+				if (typeof d.placeholder == 'string' && a.src)
+					a.src = d.placeholder;
+				if (b && d.find)
+					b = b.replace(d.find, d.replace);
+				return b || null
+			}),
+		data = {
+			loaded : 0,
+			failed : 0,
+			next : 0,
+			done : 0,
+			total : f.length
+		};
+		if (!data.total)
+			return finish();
+		var g = $(Array(d.threshold + 1).join('<img/>')).load(handler).error(handler).bind('abort', handler).each(fetch);
+		function handler(e) {
+			data.element = this;
+			data.found = e.type == 'load';
+			data.image = this.src;
+			data.index = this.index;
+			var a = data.original = c[this.index];
+			data[data.found ? 'loaded' : 'failed']++;
+			data.done++;
+			if (d.enforceCache)
+				h.cache.push($('<img/>').attr('src', data.image)[0]);
+			if (d.placeholder && a.src)
+				a.src = data.found ? data.image : d.notFound || a.src;
+			if (d.onComplete)
+				d.onComplete(data);
+			if (data.done < data.total)
+				fetch(0, this);
+			else {
+				if (g && g.unbind)
+					g.unbind('load').unbind('error').unbind('abort');
+				g = null;
+				finish()
+			}
+		};
+		function fetch(i, a, b) {
+			if (a.attachEvent && data.next && data.next % h.gap == 0 && !b) {
+				setTimeout(function () {
+					fetch(i, a, 1)
+				}, 0);
+				return !1
+			}
+			if (data.next == data.total)
+				return !1;
+			a.index = data.next;
+			a.src = f[data.next++];
+			if (d.onRequest) {
+				data.index = a.index;
+				data.element = a;
+				data.image = a.src;
+				data.original = c[data.next - 1];
+				d.onRequest(data)
+			}
+		};
+		function finish() {
+			if (d.onFinish)
+				d.onFinish(data)
+		}
+	};
+	h.gap = 14;
+	h.cache = [];
+	h.defaults = {
+		threshold : 2,
+		base : '',
+		ext : '',
+		replace : ''
+	};
+	$.fn.preload = function (a) {
+		h(this, a);
+		return this
+	}
+})(jQuery);
